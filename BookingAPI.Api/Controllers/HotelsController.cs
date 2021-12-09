@@ -24,6 +24,15 @@ namespace BookingAPI.Api.Controllers
             return Ok(hotels);
         }
 
+        [Route("{id}")]
+        [HttpGet]   
+        public IActionResult GetHotelById(int id)
+        {
+            var hotels = GetHotels();
+            var hotel = hotels.FirstOrDefault(h => h.HotelId == id);
+            return Ok(hotel);
+        }
+
         private List<Hotel> GetHotels()
         {
             return new List<Hotel>
