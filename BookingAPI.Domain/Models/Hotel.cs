@@ -15,6 +15,7 @@ namespace BookingAPI.Domain.Models
         public string City { get; set; }
         public string Country { get; set; }
         public List<Room> Rooms { get; set; }
+        public string Description { get; set; }
 
     }
 }
