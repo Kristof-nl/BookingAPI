@@ -24,7 +24,7 @@ namespace BookingAPI.Api.Controllers
             return Ok(hotels);
         }
 
-        
+
         [HttpGet]
         [Route("{id}")]
         public IActionResult GetHotelById(int id)
@@ -46,6 +46,19 @@ namespace BookingAPI.Api.Controllers
             return CreatedAtAction(nameof(GetHotelById), new { id = hotel.HotelId }, hotel);
         }
 
+        [HttpPut]
+        [Route("{id}")]
+        public IActionResult UpdateHotel([FromBody] Hotel update, int id)
+        {
+            var hotels = GetHotels();
+            var old = hotels.FirstOrDefault(h => h.HotelId == id);
+            hotels.Remove(old);
+            hotels.Add(update);
+
+            return NoContent();
+        }
+
+        
         private List<Hotel> GetHotels()
         {
             return new List<Hotel>
