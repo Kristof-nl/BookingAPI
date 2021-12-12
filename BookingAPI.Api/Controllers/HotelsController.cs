@@ -12,15 +12,16 @@ namespace BookingAPI.Api.Controllers
     [ApiController]
     public class HotelsController : Controller
     {
-        public HotelsController()
+        private readonly DataSource _dataSource;
+        public HotelsController(DataSource dataSource)
         {
-
+            _dataSource = dataSource;
         }
 
         [HttpGet]
         public IActionResult GetAllHotels()
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             return Ok(hotels);
         }
 
@@ -29,7 +30,7 @@ namespace BookingAPI.Api.Controllers
         [Route("{id}")]
         public IActionResult GetHotelById(int id)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             var hotel = hotels.FirstOrDefault(h => h.HotelId == id);
 
             if (hotel == null)
@@ -41,7 +42,7 @@ namespace BookingAPI.Api.Controllers
         [HttpPost]
         public IActionResult CreateHotel([FromBody] Hotel hotel)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             hotels.Add(hotel);
             return CreatedAtAction(nameof(GetHotelById), new { id = hotel.HotelId }, hotel);
         }
@@ -50,39 +51,33 @@ namespace BookingAPI.Api.Controllers
         [Route("{id}")]
         public IActionResult UpdateHotel([FromBody] Hotel update, int id)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             var old = hotels.FirstOrDefault(h => h.HotelId == id);
+
+            if (old == null)
+                return NotFound("No resource with te corresponding Id found");
+
             hotels.Remove(old);
             hotels.Add(update);
 
             return NoContent();
         }
 
-        
-        private List<Hotel> GetHotels()
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteHotel(int id)
         {
-            return new List<Hotel>
-            {
-                new Hotel
-                {
-                    HotelId = 1,
-                    Name = "Conquiscador",
-                    Stars = 3,
-                    Country = "Puerto Rico ",
-                    City = "Fajardo",
-                    Description = "Some nice description"
-                },
+            var hotels = _dataSource.Hotels;
+            var toDelete = hotels.FirstOrDefault(h => h.HotelId == id);
 
-                new Hotel
-                {
-                    HotelId = 1,
-                    Stars = 3,
-                    Name = "The Westin",
-                    Country = "USA ",
-                    City = "San Francisco",
-                    Description = "Some nice description"
-                }
-            };
+            if(toDelete == null)
+            {
+                return NotFound("No resource with te corresponding Id found");
+            }
+
+            hotels.Remove(toDelete);
+
+            return NoContent();
         }
     }
 }
