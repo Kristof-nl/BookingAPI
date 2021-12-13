@@ -1,3 +1,4 @@
+using BookingAPI.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +35,7 @@ namespace BookingAPI.Api
             });
 
             services.AddSingleton<DataSource>();
+            services.AddSingleton<MyFirstService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
