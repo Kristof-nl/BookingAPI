@@ -1,4 +1,5 @@
 ﻿using BookingAPI.Api.Services;
+using BookingAPI.Api.Services.Abstractions;
 using BookingAPI.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,9 @@ namespace BookingAPI.Api.Controllers
     public class HotelsController : Controller
     {
         private readonly MyFirstService _myFirstService;
+        private readonly ISingletonOperation _singleton;
+        private readonly ITransientOperation _transient;
+
         public HotelsController(MyFirstService service)
         {
             _myFirstService = service;

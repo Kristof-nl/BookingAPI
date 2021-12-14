@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BookingAPI.Api.Services.Abstractions
 {
-    public interface ISingeltonOperation : IOperation 
+    public interface ISingletonOperation : IOperation 
     {
 
     }
