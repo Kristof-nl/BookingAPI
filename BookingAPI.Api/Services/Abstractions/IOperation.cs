@@ -7,6 +7,6 @@ namespace BookingAPI.Api.Services.Abstractions
 {
     public interface IOperation
     {
-        Guid GetGuid();
+        Guid Guid { get; set; }
     }
 }

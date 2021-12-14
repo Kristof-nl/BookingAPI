@@ -8,11 +8,9 @@ namespace BookingAPI.Api.Services
 {
     public class SingletonOperation : ISingletonOperation
     {
-        public Guid GetGuid()
-        {
-            return Guid.NewGuid();
-        }
+        public Guid Guid { get; set; } = Guid.NewGuid();
     }
-
-
 }
+
+
+

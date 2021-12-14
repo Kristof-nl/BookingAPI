@@ -8,9 +8,7 @@ namespace BookingAPI.Api.Services
 {
     public class TransientOperation : ITransientOperation
     {
-        public Guid GetGuid()
-        {
-            return Guid.NewGuid();
-        }
+        public Guid Guid { get; set; } = Guid.NewGuid();
     }
 }
+

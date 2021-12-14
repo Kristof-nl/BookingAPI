@@ -8,9 +8,6 @@ namespace BookingAPI.Api.Services
 {
     public class ScopedOperation : IScopedOperation
     {
-        public Guid GetGuid()
-        {
-            return Guid.NewGuid();
-        }
+        public Guid Guid { get; set; } = Guid.NewGuid();
     }
 }
