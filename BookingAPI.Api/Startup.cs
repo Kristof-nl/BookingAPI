@@ -1,4 +1,5 @@
 
+using BookingAPI.Api.Middelware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace BookingAPI.Api
 {
@@ -31,6 +33,7 @@ namespace BookingAPI.Api
             });
 
             services.AddSingleton<DataSource>();
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +51,8 @@ namespace BookingAPI.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseDateTimeHeader();
 
             app.UseEndpoints(endpoints =>
             {

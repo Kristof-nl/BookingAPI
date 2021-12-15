@@ -14,17 +14,20 @@ namespace BookingAPI.Api.Controllers
     public class HotelsController : Controller
     {
         private readonly ILogger<HotelsController> _logger;
+        private readonly HttpContext _htpp;
 
-        public HotelsController(ILogger<HotelsController> logger)
+        public HotelsController(ILogger<HotelsController> logger, IHttpContextAccessor httpContextAccessor)
         {
            
             _logger = logger;
+            _htpp = httpContextAccessor.HttpContext;
         }
 
         [HttpGet]
         public IActionResult GetAllHotels()
         {
-            return Ok();
+            HttpContext.Request.Headers.TryGetValue("my-middelware-header", out var headerDate);
+            return Ok(headerDate);
         }
 
 
