@@ -1,5 +1,4 @@
-using BookingAPI.Api.Services;
-using BookingAPI.Api.Services.Abstractions;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,10 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookingAPI.Api
 {
@@ -36,12 +31,6 @@ namespace BookingAPI.Api
             });
 
             services.AddSingleton<DataSource>();
-            services.AddSingleton<MyFirstService>();
-
-            services.AddSingleton<ISingletonOperation, SingletonOperation>();
-            services.AddTransient<ITransientOperation, TransientOperation>();
-            services.AddScoped<IScopedOperation, ScopedOperation>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
