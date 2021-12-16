@@ -1,6 +1,5 @@
-
-using BookingAPI.Api.Middelware;
 using BookingAPI.Dal;
+using CwkBooking.Api.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,7 +33,6 @@ namespace BookingAPI.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BookingAPI.Api", Version = "v1" });
             });
 
-            services.AddSingleton<DataSource>();
             services.AddHttpContextAccessor();
 
             var cs = Configuration.GetConnectionString("Default");

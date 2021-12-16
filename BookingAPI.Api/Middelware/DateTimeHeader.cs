@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace BookingAPI.Api.Middelware
+namespace CwkBooking.Api.Middleware
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class DateTimeHeader
     {
         private readonly RequestDelegate _next;
@@ -19,8 +16,11 @@ namespace BookingAPI.Api.Middelware
 
         public async Task Invoke(HttpContext httpContext)
         {
-            httpContext.Request.Headers.Add("my-middelware-header", DateTime.Now.ToString());
+            //executed on the request
+            httpContext.Request.Headers.Add("my-middleware-header", DateTime.Now.ToString());
             await _next(httpContext);
+
+            //executed on the response
         }
     }
 
