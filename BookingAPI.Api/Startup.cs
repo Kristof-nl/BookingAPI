@@ -1,9 +1,11 @@
 
 using BookingAPI.Api.Middelware;
+using BookingAPI.Dal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +36,9 @@ namespace BookingAPI.Api
 
             services.AddSingleton<DataSource>();
             services.AddHttpContextAccessor();
+
+            var cs = Configuration.GetConnectionString("Default");
+            services.AddDbContext<DataContext>(options => { options.UseSqlServer(cs); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
