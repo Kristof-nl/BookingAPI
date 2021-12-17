@@ -1,4 +1,5 @@
-﻿using BookingAPI.Dal;
+﻿using BookingAPI.Api.Dtos;
+using BookingAPI.Dal;
 using BookingAPI.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,11 +45,29 @@ namespace BookingAPI.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateHotel([FromBody] Hotel hotel)
+        public async Task<IActionResult> CreateHotel([FromBody] HotelCreatedDto hotel)
         {
-            _ctx.Hotels.Add(hotel); 
+            var domainHotel = new Hotel();
+            domainHotel.Name = hotel.Name;
+            domainHotel.Address = hotel.Address;
+            domainHotel.City = hotel.City;
+            domainHotel.Country = hotel.Country;
+            domainHotel.Description = hotel.Country;
+            domainHotel.Stars = hotel.Stars;
+
+            HotelGetDto hotelGet = new HotelGetDto();
+            hotelGet.HotelId = domainHotel.HotelId;
+            hotelGet.Name = domainHotel.Name;
+            hotelGet.Address = domainHotel.Address;
+            hotelGet.City = domainHotel.City;
+            hotelGet.Country = domainHotel.Country;
+            hotelGet.Stars = domainHotel.Stars;
+            hotelGet.Description = domainHotel.Description;
+
+
+            _ctx.Hotels.Add(domainHotel); 
             await _ctx.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetHotelById), new { id = hotel.HotelId }, hotel );
+            return CreatedAtAction(nameof(GetHotelById), new { id = domainHotel.HotelId }, hotelGet );
         }
 
         [HttpPut]
