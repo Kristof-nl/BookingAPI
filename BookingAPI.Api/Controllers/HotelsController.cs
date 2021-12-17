@@ -1,4 +1,5 @@
-﻿using BookingAPI.Api.Dtos;
+﻿using AutoMapper;
+using BookingAPI.Api.Dtos;
 using BookingAPI.Dal;
 using BookingAPI.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -19,20 +20,24 @@ namespace BookingAPI.Api.Controllers
         private readonly ILogger<HotelsController> _logger;
         private readonly HttpContext _htpp;
         private readonly DataContext _ctx;
+        private readonly IMapper _mapper;
 
-        public HotelsController(ILogger<HotelsController> logger, IHttpContextAccessor httpContextAccessor, DataContext ctx)
+        public HotelsController(ILogger<HotelsController> logger, IHttpContextAccessor httpContextAccessor, DataContext ctx, IMapper mapper)
         {
            
             _logger = logger;
             _htpp = httpContextAccessor.HttpContext;
             _ctx = ctx;    
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllHotels()
         {
             var hotels = await _ctx.Hotels.ToListAsync();
-            return Ok(hotels);
+            var hotelsGet = _mapper.Map<List<HotelGetDto>>(hotels);
+
+            return Ok(hotelsGet);
         }
 
 
@@ -41,45 +46,37 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> GetHotelById(int id)
         {
             var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
-            return Ok(hotel);
+
+            if (hotel == null)
+            {
+                return NotFound();
+            }
+
+            var hotelGet = _mapper.Map<HotelGetDto>(hotel);
+            return Ok(hotelGet);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateHotel([FromBody] HotelCreatedDto hotel)
         {
-            var domainHotel = new Hotel();
-            domainHotel.Name = hotel.Name;
-            domainHotel.Address = hotel.Address;
-            domainHotel.City = hotel.City;
-            domainHotel.Country = hotel.Country;
-            domainHotel.Description = hotel.Country;
-            domainHotel.Stars = hotel.Stars;
-
-            HotelGetDto hotelGet = new HotelGetDto();
-            hotelGet.HotelId = domainHotel.HotelId;
-            hotelGet.Name = domainHotel.Name;
-            hotelGet.Address = domainHotel.Address;
-            hotelGet.City = domainHotel.City;
-            hotelGet.Country = domainHotel.Country;
-            hotelGet.Stars = domainHotel.Stars;
-            hotelGet.Description = domainHotel.Description;
-
+            var domainHotel = _mapper.Map<Hotel>(hotel);
 
             _ctx.Hotels.Add(domainHotel); 
             await _ctx.SaveChangesAsync();
+
+            var hotelGet = _mapper.Map<HotelGetDto>(domainHotel);
+
             return CreatedAtAction(nameof(GetHotelById), new { id = domainHotel.HotelId }, hotelGet );
         }
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateHotel([FromBody] Hotel update, int id)
+        public async Task<IActionResult> UpdateHotel([FromBody] HotelCreatedDto update, int id)
         {
-            var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
-            hotel.Stars = update.Stars;
-            hotel.Description = update.Description;
-            hotel.Name = update.Name;
+            var toUpdate = _mapper.Map<Hotel>(update);
+            toUpdate.HotelId = id;
 
-            _ctx.Hotels.Update(hotel);
+            _ctx.Hotels.Update(toUpdate);
             await _ctx.SaveChangesAsync();
 
             return NoContent();
@@ -90,6 +87,12 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
+
+            if(hotel == null)
+            {
+                return NotFound();
+            }
+
             _ctx.Hotels.Remove(hotel);
             await _ctx.SaveChangesAsync();
 
