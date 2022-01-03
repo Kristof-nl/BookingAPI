@@ -20,4 +20,6 @@ namespace BookingAPI.Dal
         public DbSet<Reservation> Reservations { get; set; }
 
     }
+
+    
 }
