@@ -4,9 +4,9 @@ using BookingAPI.Domain.Models;
 
 namespace BookingAPI.Api.AutoMapper
 {
-    public class HotelMappingsProfile : Profile
+    public class HotelMappingProfile : Profile
     {
-        public HotelMappingsProfile()
+        public HotelMappingProfile()
         {
             CreateMap<HotelCreatedDto, Hotel>();
             CreateMap<Hotel, HotelGetDto>();
