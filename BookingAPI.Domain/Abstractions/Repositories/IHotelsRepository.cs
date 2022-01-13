@@ -15,9 +15,9 @@ namespace BookingAPI.Domain.Abstractions.Repositories
         Task<Hotel> UpdateHotelAsync(Hotel updatedHotel);
         Task<Hotel> DeleteHotelAsync(int id);
         Task<List<Room>> ListHotelRoomsAsync(int hotelId);
-        Task<Room> GetRoomByIdAsync(int hotelId, int roomId);
-        Task<Room> CreateRoomAsync(int hotelId, Room room);
-        Task<Room> UpdateRoomAsync(int hotelId, Room updatedRoom);
-        Task<Room> DeleteRoomAsync(int hotelId, int roomId);
+        Task<Room> GetHotelRoomByIdAsync(int hotelId, int roomId);
+        Task<Room> CreateHotelRoomAsync(int hotelId, Room room);
+        Task<Room> UpdateHotelRoomAsync(int hotelId, Room updatedRoom);
+        Task<Room> DeleteHotelRoomAsync(int hotelId, int roomId);
     }
 }

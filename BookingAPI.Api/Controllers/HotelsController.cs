@@ -27,7 +27,7 @@ namespace BookingAPI.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllHotels()
         {
-            var hotels = await _ctx.Hotels.ToListAsync();
+            var hotels = 
             var hotelsGet = _mapper.Map<List<HotelGetDto>>(hotels);
 
             return Ok(hotelsGet);
@@ -38,12 +38,7 @@ namespace BookingAPI.Api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetHotelById(int id)
         {
-            var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
-
-            if (hotel == null)
-            {
-                return NotFound();
-            }
+            
 
             var hotelGet = _mapper.Map<HotelGetDto>(hotel);
             return Ok(hotelGet);
@@ -53,9 +48,6 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> CreateHotel([FromBody] HotelCreatedDto hotel)
         {
             var domainHotel = _mapper.Map<Hotel>(hotel);
-
-            _ctx.Hotels.Add(domainHotel);
-            await _ctx.SaveChangesAsync();
 
             var hotelGet = _mapper.Map<HotelGetDto>(domainHotel);
 
@@ -67,10 +59,7 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> UpdateHotel([FromBody] HotelCreatedDto update, int id)
         {
             var toUpdate = _mapper.Map<Hotel>(update);
-            toUpdate.HotelId = id;
-
-            _ctx.Hotels.Update(toUpdate);
-            await _ctx.SaveChangesAsync();
+           
 
             return NoContent();
         }
@@ -79,15 +68,6 @@ namespace BookingAPI.Api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
-
-            if (hotel == null)
-            {
-                return NotFound();
-            }
-
-            _ctx.Hotels.Remove(hotel);
-            await _ctx.SaveChangesAsync();
 
             return NoContent();
         }
@@ -97,7 +77,7 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms")]
         public async Task<IActionResult> GetAllHotelRooms(int hotelId)
         {
-            var rooms = await _ctx.Rooms.Where(r => r.HotelId == hotelId).ToListAsync();
+            var rooms = 
             var mappedRooms = _mapper.Map<List<RoomGetDto>>(rooms);
             return Ok(mappedRooms);
         }
@@ -107,11 +87,7 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms/{roomId}")]
         public async Task<IActionResult> GetHotelRoomById(int hotelId, int roomId)
         {
-            var room = await _ctx.Rooms.FirstOrDefaultAsync(r => r.HotelId == hotelId && r.RoomId == roomId);
-            if(room == null)
-            {
-                return NotFound("Room not found");
-            }
+            
             var mappedRoom = _mapper.Map<RoomGetDto>(room);
 
             return Ok(mappedRoom);
@@ -123,18 +99,7 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> AddHotelRoom(int hotelId, [FromBody] RoomPostPutDto newRoom)
         {
             var room = _mapper.Map<Room>(newRoom);
-            //room.HotelId = hotelId; 
-
-            //_ctx.Rooms.Add(room);
-            //await _ctx.SaveChangesAsync();
-
-            var hotel = await _ctx.Hotels.Include(h => h.Rooms).
-                FirstOrDefaultAsync(h => h.HotelId == hotelId);
-
-            hotel.Rooms.Add(room);
-
-            await _ctx.SaveChangesAsync();  
-
+              
             var mappedRoom = _mapper.Map<RoomGetDto>(room);
 
             return CreatedAtAction(nameof(GetHotelRoomById),
@@ -160,15 +125,6 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms/{roomId}")]
         public async Task<IActionResult> RemoveRoomFromHotel(int hotelId, int roomId)
         {
-            var room = await _ctx.Rooms.FirstOrDefaultAsync(r => r.RoomId == roomId && r.HotelId == hotelId);
-
-            if (room == null)
-            {
-                return NotFound("Room not found");
-            }
-            
-            _ctx.Rooms.Remove(room);
-            await _ctx.SaveChangesAsync();
 
             return NoContent();
         }
