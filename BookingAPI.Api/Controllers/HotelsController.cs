@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingAPI.Api.Dtos;
 using BookingAPI.Dal;
+using BookingAPI.Domain.Abstractions.Repositories;
 using BookingAPI.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,19 +16,19 @@ namespace BookingAPI.Api.Controllers
     [ApiController]
     public class HotelsController : Controller
     {
-        private readonly DataContext _ctx;
+        private readonly IHotelsRepository _hotelsRepo;
         private readonly IMapper _mapper;
 
-        public HotelsController(DataContext ctx, IMapper mapper)
+        public HotelsController(IMapper mapper, IHotelsRepository repo)
         {
-            _ctx = ctx;
+            _hotelsRepo = repo;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllHotels()
         {
-            var hotels = 
+            var hotels = await _hotelsRepo.GetAllHotelsAsync();
             var hotelsGet = _mapper.Map<List<HotelGetDto>>(hotels);
 
             return Ok(hotelsGet);
@@ -38,16 +39,22 @@ namespace BookingAPI.Api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetHotelById(int id)
         {
-            
+            var hotel = await _hotelsRepo.GetHotelByIdAsync(id);
+
+            if (hotel == null)
+                return NotFound();
 
             var hotelGet = _mapper.Map<HotelGetDto>(hotel);
             return Ok(hotelGet);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> CreateHotel([FromBody] HotelCreatedDto hotel)
         {
             var domainHotel = _mapper.Map<Hotel>(hotel);
+
+            await _hotelsRepo.CreateHotelAsync(domainHotel);
 
             var hotelGet = _mapper.Map<HotelGetDto>(domainHotel);
 
@@ -59,15 +66,22 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> UpdateHotel([FromBody] HotelCreatedDto update, int id)
         {
             var toUpdate = _mapper.Map<Hotel>(update);
-           
+            toUpdate.HotelId = id;
 
+            await _hotelsRepo.UpdateHotelAsync(toUpdate);
+           
             return NoContent();
         }
+
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
+            var hotel = await _hotelsRepo.DeleteHotelAsync(id);
+
+            if (hotel == null)
+                return NotFound();
 
             return NoContent();
         }
@@ -77,8 +91,9 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms")]
         public async Task<IActionResult> GetAllHotelRooms(int hotelId)
         {
-            var rooms = 
+            var rooms = await _hotelsRepo.ListHotelRoomsAsync(hotelId);
             var mappedRooms = _mapper.Map<List<RoomGetDto>>(rooms);
+
             return Ok(mappedRooms);
         }
 
@@ -87,7 +102,8 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms/{roomId}")]
         public async Task<IActionResult> GetHotelRoomById(int hotelId, int roomId)
         {
-            
+            var room = await _hotelsRepo.GetHotelRoomByIdAsync(hotelId, roomId);
+
             var mappedRoom = _mapper.Map<RoomGetDto>(room);
 
             return Ok(mappedRoom);
@@ -99,6 +115,8 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> AddHotelRoom(int hotelId, [FromBody] RoomPostPutDto newRoom)
         {
             var room = _mapper.Map<Room>(newRoom);
+
+            await _hotelsRepo.CreateHotelRoomAsync(hotelId, room);
               
             var mappedRoom = _mapper.Map<RoomGetDto>(room);
 
@@ -115,8 +133,7 @@ namespace BookingAPI.Api.Controllers
             toUpdate.RoomId = roomId;   
             toUpdate.HotelId = hotelId;
 
-            _ctx.Rooms.Update(toUpdate);
-            await _ctx.SaveChangesAsync();
+            await _hotelsRepo.UpdateHotelRoomAsync(hotelId, toUpdate);
 
             return NoContent();
         }
@@ -125,6 +142,10 @@ namespace BookingAPI.Api.Controllers
         [Route("{hotelId}/rooms/{roomId}")]
         public async Task<IActionResult> RemoveRoomFromHotel(int hotelId, int roomId)
         {
+            var room = await _hotelsRepo.DeleteHotelRoomAsync(hotelId, roomId);
+
+            if (room == null)
+                return NotFound("Room not found");
 
             return NoContent();
         }

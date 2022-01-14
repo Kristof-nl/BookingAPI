@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace BookingAPI.Dal.Repository
 {
-    public class HotelRepository : IHotelsRepository
+    public class HotelsRepository : IHotelsRepository
     {
         private readonly DataContext _ctx;
 
-        public HotelRepository(DataContext ctx)
+        public HotelsRepository(DataContext ctx)
         {
             _ctx = ctx;
         }
@@ -94,7 +94,7 @@ namespace BookingAPI.Dal.Repository
                 return null;
             }
 
-            return null;
+            return room;
         }
 
         public async Task<List<Room>> ListHotelRoomsAsync(int hotelId)
@@ -104,17 +104,21 @@ namespace BookingAPI.Dal.Repository
 
         public async Task<Hotel> UpdateHotelAsync(Hotel updatedHotel)
         {
-            updatedHotel.HotelId = id;
 
-            _ctx.Hotels.Update(toUpdate);
+            _ctx.Hotels.Update(updatedHotel);
             await _ctx.SaveChangesAsync();
+
+            return updatedHotel;
 
 
         }
 
-        public Task<Room> UpdateHotelRoomAsync(int hotelId, Room updatedRoom)
+        public async Task<Room> UpdateHotelRoomAsync(int hotelId, Room updatedRoom)
         {
-            throw new NotImplementedException();
+            _ctx.Rooms.Update(updatedRoom);
+            await _ctx.SaveChangesAsync();
+
+            return updatedRoom;
         }
     }
 }
