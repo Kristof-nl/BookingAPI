@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingAPI.Dal.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211216131745_Initial")]
-    partial class Initial
+    [Migration("20220118185840_CleanUp")]
+    partial class CleanUp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,19 +58,24 @@ namespace BookingAPI.Dal.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime?>("CheckInDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Customer")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("RoomId")
+                    b.Property<int>("HotelId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
 
                     b.HasKey("ReservationId");
+
+                    b.HasIndex("HotelId");
 
                     b.HasIndex("RoomId");
 
@@ -84,7 +89,13 @@ namespace BookingAPI.Dal.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("HotelId")
+                    b.Property<DateTime?>("BusyFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("BusyTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<bool>("NeedsRepair")
@@ -105,18 +116,32 @@ namespace BookingAPI.Dal.Migrations
 
             modelBuilder.Entity("BookingAPI.Domain.Models.Reservation", b =>
                 {
+                    b.HasOne("BookingAPI.Domain.Models.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BookingAPI.Domain.Models.Room", "Room")
                         .WithMany()
-                        .HasForeignKey("RoomId");
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
 
                     b.Navigation("Room");
                 });
 
             modelBuilder.Entity("BookingAPI.Domain.Models.Room", b =>
                 {
-                    b.HasOne("BookingAPI.Domain.Models.Hotel", null)
+                    b.HasOne("BookingAPI.Domain.Models.Hotel", "Hotel")
                         .WithMany("Rooms")
-                        .HasForeignKey("HotelId");
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("BookingAPI.Domain.Models.Hotel", b =>
