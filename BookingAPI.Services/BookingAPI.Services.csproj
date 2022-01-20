@@ -4,4 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookingAPI.Dal\BookingAPI.Dal.csproj" />
+    <ProjectReference Include="..\BookingAPI.Domain\BookingAPI.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

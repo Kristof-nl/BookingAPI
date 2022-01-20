@@ -1,6 +1,8 @@
 using BookingAPI.Dal;
 using BookingAPI.Dal.Repository;
 using BookingAPI.Domain.Abstractions.Repositories;
+using BookingAPI.Domain.Abstractions.Services;
+using BookingAPI.Services.Services;
 using CwkBooking.Api.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +44,7 @@ namespace BookingAPI.Api
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IHotelsRepository, HotelsRepository>();
+            services.AddScoped<IReservationService, ReservationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
