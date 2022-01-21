@@ -9,6 +9,6 @@ namespace BookingAPI.Domain.Abstractions.Services
 {
     public interface IReservationService
     {
-        Task<Reservation> MakeReservation(int hotelId, int roomId, DateTime checkIn, DateTime checkOut, string customer);
+        Task<Reservation> MakeReservation(Reservation reservation);
     }
 }

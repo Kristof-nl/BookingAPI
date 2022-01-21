@@ -22,18 +22,17 @@ namespace BookingAPI.Services.Services
         }
 
 
-        public async Task<Reservation> MakeReservation(int hotelId, int roomId, DateTime checkIn, 
-            DateTime checkOut, string customer)
+        public async Task<Reservation> MakeReservation(Reservation reservation)
         {
             //Step 1 - create reservation instance
-            var reservation = new Reservation
-            {
-                HotelId = hotelId,
-                RoomId = roomId,
-                CheckInDate = checkIn,
-                CheckOutDate = checkOut,
-                Customer = customer
-            };
+            //var reservation = new Reservation
+            //{
+            //    HotelId = hotelId,
+            //    RoomId = roomId,
+            //    CheckInDate = checkIn,
+            //    CheckOutDate = checkOut,
+            //    Customer = customer
+            //};
 
             //Step 2 Get the hotel, including room
             var hotel = await _hotelRepository.GetHotelByIdAsync(reservation.HotelId);
