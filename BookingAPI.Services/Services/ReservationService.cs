@@ -41,10 +41,15 @@ namespace BookingAPI.Services.Services
             var room = hotel.Rooms.Where(r => r.RoomId == reservation.RoomId).FirstOrDefault();
 
             //Step 4 Make sure that the room is availible
-            var isBusy = reservation.CheckInDate >= room.BusyFrom.Value
-                && reservation.CheckOutDate <= room.BusyTo.Value;
+            var roomBusyFrom = room.BusyFrom == null ? default(DateTime) : room.BusyFrom;
+            var roomBusyTo = room.BusyTo == null ? default(DateTime) : room.BusyTo;
+            var isBusy = reservation.CheckInDate >= room.BusyFrom
+                || reservation.CheckOutDate <= roomBusyTo;
+                
+            if (isBusy)
+                return null;
 
-            if (isBusy && room.NeedsRepair)
+            if (room.NeedsRepair)
                 return null;
 
             //Step 5 Set busyfrom and busyto on the room

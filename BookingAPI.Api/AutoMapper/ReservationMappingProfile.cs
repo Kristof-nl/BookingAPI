@@ -8,7 +8,8 @@ namespace BookingAPI.Api.AutoMapper
     {
         public ReservationMappingProfile()
         {
-            CreateMap<ReservationPutPostDto, Reservation>();
+            CreateMap<ReservationPutPostDto, Reservation>().ReverseMap();
+            CreateMap<Reservation, ReservationGetDto>().ReverseMap();
         }
     }
 }

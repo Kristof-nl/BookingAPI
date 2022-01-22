@@ -24,8 +24,11 @@ namespace BookingAPI.Api.Controllers
         public async Task<IActionResult> MakeReservation([FromBody] ReservationPutPostDto reservationDto)
         {
             var reservation = _mapper.Map<Reservation>(reservationDto);
-            await _reservationService.MakeReservation(reservation);
-            return Ok();
+            var result = await _reservationService.MakeReservation(reservation);
+
+            if (result == null)
+                return BadRequest("Cannot make reservation");
+            return Ok(result);
         }
     }
 }
