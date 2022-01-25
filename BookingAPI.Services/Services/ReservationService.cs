@@ -2,6 +2,7 @@
 using BookingAPI.Domain.Abstractions.Repositories;
 using BookingAPI.Domain.Abstractions.Services;
 using BookingAPI.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,27 +25,20 @@ namespace BookingAPI.Services.Services
 
         public async Task<Reservation> MakeReservation(Reservation reservation)
         {
-            //Step 1 - create reservation instance
-            //var reservation = new Reservation
-            //{
-            //    HotelId = hotelId,
-            //    RoomId = roomId,
-            //    CheckInDate = checkIn,
-            //    CheckOutDate = checkOut,
-            //    Customer = customer
-            //};
 
-            //Step 2 Get the hotel, including room
+            //Step 1 Get the hotel, including room
             var hotel = await _hotelRepository.GetHotelByIdAsync(reservation.HotelId);
 
-            //Step 3 Find the specifed room
+            //Step 2 Find the specifed room
             var room = hotel.Rooms.Where(r => r.RoomId == reservation.RoomId).FirstOrDefault();
 
-            //Step 4 Make sure that the room is availible
-            var roomBusyFrom = room.BusyFrom == null ? default(DateTime) : room.BusyFrom;
-            var roomBusyTo = room.BusyTo == null ? default(DateTime) : room.BusyTo;
-            var isBusy = reservation.CheckInDate >= room.BusyFrom
-                || reservation.CheckOutDate <= roomBusyTo;
+            if(hotel == null || room == null) return null;
+
+            //Step 3 Make sure that the room is availible
+            bool isBusy = await _ctx.Reservations.AnyAsync(r => 
+                (reservation.CheckInDate >= r.CheckInDate && reservation.CheckInDate <= r.CheckOutDate)
+                && (reservation.CheckOutDate >= r.CheckInDate && reservation.CheckOutDate <= r.CheckOutDate)
+            );
                 
             if (isBusy)
                 return null;
@@ -52,11 +46,8 @@ namespace BookingAPI.Services.Services
             if (room.NeedsRepair)
                 return null;
 
-            //Step 5 Set busyfrom and busyto on the room
-            room.BusyFrom = reservation.CheckInDate;
-            room.BusyTo = reservation.CheckOutDate;
 
-            //Step 6 Persist all changes to the database
+            //Step 4 Persist all changes to the database
             _ctx.Rooms.Update(room);
             _ctx.Reservations.Add(reservation);
 

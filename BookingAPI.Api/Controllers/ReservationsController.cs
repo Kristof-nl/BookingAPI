@@ -28,6 +28,9 @@ namespace BookingAPI.Api.Controllers
 
             if (result == null)
                 return BadRequest("Cannot make reservation");
+
+            var mapped = _mapper.Map<ReservationGetDto>(result);
+
             return Ok(result);
         }
     }
