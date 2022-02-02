@@ -23,7 +23,7 @@ namespace BookingAPI.Services.Services
         }
 
 
-        public async Task<Reservation> MakeReservation(Reservation reservation)
+        public async Task<Reservation> MakeReservationAsync(Reservation reservation)
         {
 
             //Step 1 Get the hotel, including room
@@ -55,5 +55,35 @@ namespace BookingAPI.Services.Services
 
             return reservation;
         }
+
+        public async Task<List<Reservation>> GetAllReservationsAsync()
+        {
+            return await _ctx.Reservations
+                .Include( h => h.Hotel)
+                .Include(r => r.Room)
+                .ToListAsync();
+        }
+
+
+        public async Task<Reservation> GetReservationByIdAsync(int id)
+        {
+            return await _ctx.Reservations
+                .Include(h => h.Hotel)
+                .Include(r => r.Room)
+                .FirstOrDefaultAsync(r => r.ReservationId == id);
+        }
+
+
+        public async Task<Reservation> CancelReservationAsync(int id)
+        {
+            var reservation = await _ctx.Reservations.FirstOrDefaultAsync(r => r.ReservationId == id);
+
+            if(reservation != null)
+                _ctx.Reservations.Remove(reservation);
+                
+            await _ctx.SaveChangesAsync();
+            return reservation;
+        }
+
     }
 }
